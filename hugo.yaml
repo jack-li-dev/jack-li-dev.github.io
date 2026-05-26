@@ -1,0 +1,60 @@
+baseURL: "https://jack-li.me/"
+languageCode: "en-us"
+title: "Jack Li"
+theme: "PaperMod"
+hasCJKLanguage: true
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+minify:
+  minifyOutput: true
+
+params:
+  env: production
+  defaultTheme: "dark"
+  disableThemeToggle: true
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowWordCount: true
+  ShowRssButtonInSectionTermList: true
+  UseHugoToc: true
+  disableSpecial1stPost: false
+  profileMode:
+    enabled: true
+    title: "Jack Li"
+    subtitle: "Offshore independent infrastructure, sovereignty firewall, and high-availability systems."
+    buttons:
+      - name: "GitHub"
+        url: "https://github.com/jack-li-dev"
+      - name: "Email"
+        url: "mailto:jack@jack-li.me"
+  socialIcons:
+    - name: "github"
+      url: "https://github.com/jack-li-dev"
+    - name: "email"
+      url: "mailto:jack@jack-li.me"
+
+menu:
+  main:
+    - identifier: posts
+      name: Posts
+      url: /posts/
+      weight: 10
+    - identifier: archives
+      name: Archives
+      url: /archives/
+      weight: 20
+    - identifier: search
+      name: Search
+      url: /search/
+      weight: 30
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Runbook on Jack Li</title><link>https://jack-li.me/categories/runbook/</link><description>Recent content in Runbook on Jack Li</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Thu, 01 Jan 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://jack-li.me/categories/runbook/index.xml" rel="self" type="application/rss+xml"/><item><title>Kind High Availability 2026 Runbook</title><link>https://jack-li.me/posts/kind-high-availability-2026/</link><pubDate>Thu, 01 Jan 2026 00:00:00 +0800</pubDate><guid>https://jack-li.me/posts/kind-high-availability-2026/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;Runbook environment: Linux Kernel 6.1+, Docker 26.0+, Kind v0.24+&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id="kind-high-availability-2026"&gt;Kind High Availability 2026&lt;/h1&gt;
+&lt;p&gt;This is the genesis runbook for a root-domain GitHub Pages deployment backed by a reproducible Hugo build and a Kubernetes-oriented infrastructure workflow.&lt;/p&gt;
+&lt;h2 id="control-plane-baseline"&gt;Control Plane Baseline&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Linux kernel baseline: 6.1+&lt;/li&gt;
+&lt;li&gt;Container runtime baseline: Docker 26.0+&lt;/li&gt;
+&lt;li&gt;Local Kubernetes baseline: Kind v0.24+&lt;/li&gt;
+&lt;li&gt;Deployment rule: every control-plane host must be reachable through deterministic SSH trust before bootstrap.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="critical-trap-if-the-k8s-master-host-is-also-the-deployment-host-it-must-also-have-passwordless-ssh-access-to-itself"&gt;Critical trap: if the k8s-master host is also the deployment host, it must also have passwordless SSH access to itself.&lt;/h1&gt;
+&lt;h2 id="validation"&gt;Validation&lt;/h2&gt;
+&lt;p&gt;The first validation target is not visual polish. The first target is deterministic build, deterministic push, and deterministic GitHub Pages deployment from the &lt;code&gt;main&lt;/code&gt; branch.&lt;/p&gt;</description></item></channel></rss>
