@@ -1,0 +1,6 @@
+.hugo_build.lock
+resources/_generated/
+public/
+PREVIEW_COMMAND.txt
+.DS_Store
+Thumbs.db
