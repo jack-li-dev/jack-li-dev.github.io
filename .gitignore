@@ -1,6 +1,23 @@
 .hugo_build.lock
 resources/_generated/
 public/
+
+# Hugo runtime slop
+public/
+resources/
+.hugo_build.lock
+
+# Local binary assets
+.bin/
 PREVIEW_COMMAND.txt
 .DS_Store
 Thumbs.db
+.bin/
+
+# ==============================================================================
+# 2026 PLATFORM FORTRESS - ZERO-NOISE RUNTIME BLACKLIST
+# ==============================================================================
+.bin/
+.codegraph/
+.hugo_build.lock
+public/

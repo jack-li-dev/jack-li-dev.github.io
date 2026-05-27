@@ -1,0 +1,105 @@
+:root,
+html[data-theme="dark"] {
+    --theme: #000000;
+    --entry: #050505;
+    --primary: #d8d8d8;
+    --secondary: #888888;
+    --tertiary: #222222;
+    --content: #d0d0d0;
+    --hljs-bg: #111111;
+    --code-bg: #111111;
+    --border: #222222;
+}
+
+html,
+body,
+.main {
+    background: #000000 !important;
+}
+
+pre,
+code,
+.highlight,
+.highlight pre,
+.highlight code,
+.post-content pre,
+.post-content code {
+    font-family: "JetBrains Mono", "Fira Code", monospace !important;
+}
+
+.post-content pre,
+.highlight pre,
+.highlight table,
+.highlight div {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    line-height: 1.65 !important;
+}
+
+a {
+    color: #888888;
+}
+
+a:hover {
+    color: #00ff66;
+}
+
+.profile-telemetry {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px auto 0;
+    padding: 10px 14px;
+    border: 1px solid #222222;
+    background: #080808;
+    color: #8a8a8a;
+    font-family: "JetBrains Mono", "Fira Code", monospace !important;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    letter-spacing: 0;
+}
+
+.profile-telemetry__led {
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+    border-radius: 50%;
+    background: #00ff66;
+    box-shadow: 0 0 8px rgba(0, 255, 102, 0.65);
+    animation: telemetry-led 1.8s ease-in-out infinite;
+}
+
+.profile-telemetry__text {
+    color: #8a8a8a;
+}
+
+.footer {
+    gap: 6px;
+    color: #777777;
+}
+
+.footer .zero-trust-note {
+    display: block;
+    margin-top: 8px;
+    color: #777777;
+    font-size: 0.78rem;
+    line-height: 1.6;
+}
+
+@keyframes telemetry-led {
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .profile-telemetry {
+        width: 100%;
+        align-items: flex-start;
+        font-size: 0.68rem;
+    }
+}

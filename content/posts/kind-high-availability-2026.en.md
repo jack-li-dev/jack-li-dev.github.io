@@ -1,6 +1,6 @@
 ---
 title: "Kind High Availability 2026 Runbook"
-date: 2026-01-01T00:00:00+08:00
+date: 2026-05-26T00:00:00Z
 lastmod: 2026-01-01T00:00:00+08:00
 draft: false
 tags:
@@ -17,7 +17,7 @@ categories:
 
 # Kind High Availability 2026
 
-This is the genesis runbook for a root-domain GitHub Pages deployment backed by a reproducible Hugo build and a Kubernetes-oriented infrastructure workflow.
+This runbook records the first reproducible root-domain GitHub Pages deployment for this site, using Hugo as the build layer and Kubernetes-oriented infrastructure rules as the operating model.
 
 ## Control Plane Baseline
 
@@ -30,4 +30,4 @@ This is the genesis runbook for a root-domain GitHub Pages deployment backed by 
 
 ## Validation
 
-The first validation target is not visual polish. The first target is deterministic build, deterministic push, and deterministic GitHub Pages deployment from the `main` branch.
+The validation target is simple: build deterministically, push cleanly, and deploy GitHub Pages from the `main` branch without hidden state.

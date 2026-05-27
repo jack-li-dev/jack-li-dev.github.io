@@ -1,17 +1,53 @@
 baseURL: "https://jack-li.me/"
-languageCode: "en-us"
 title: "Jack Li"
 theme: "PaperMod"
-hasCJKLanguage: true
+hasCJKLanguage: false
 enableRobotsTXT: true
 buildDrafts: false
 buildFuture: false
 buildExpired: false
+defaultContentLanguage: "en"
+defaultContentLanguageInSubdir: false
+
 minify:
   minifyOutput: true
 
+taxonomies:
+  category: "categories"
+
+languages:
+  en:
+    label: "English"
+    locale: "en-US"
+    weight: 1
+    params:
+      profileMode:
+        enabled: true
+        title: "Jack Li"
+        subtitle: "Independent offshore infrastructure, sovereignty firewalls, and high-availability systems."
+        imageUrl: ""
+    menu:
+      main:
+        - identifier: posts
+          name: Posts
+          url: /posts/
+          weight: 20
+        - identifier: about
+          name: About
+          url: /about/
+          weight: 10
+        - identifier: archives
+          name: Archives
+          url: /archives/
+          weight: 30
+        - identifier: search
+          name: Search
+          url: /search/
+          weight: 40
+
 params:
   env: production
+  lts_string: "[LTS: 2026.05.26]"
   defaultTheme: "dark"
   disableThemeToggle: true
   ShowReadingTime: true
@@ -22,36 +58,19 @@ params:
   ShowWordCount: true
   ShowRssButtonInSectionTermList: true
   UseHugoToc: true
+  showToc: true
+  TocOpen: false
   disableSpecial1stPost: false
-  profileMode:
-    enabled: true
-    title: "Jack Li"
-    subtitle: "Offshore independent infrastructure, sovereignty firewall, and high-availability systems."
-    buttons:
-      - name: "GitHub"
-        url: "https://github.com/jack-li-dev"
-      - name: "Email"
-        url: "mailto:jack@jack-li.me"
+  socialButtons:
+    - name: "github"
+      url: "https://github.com/jack-li-dev"
+    - name: "email"
+      url: "mailto:jack@jack-li.me"
   socialIcons:
     - name: "github"
       url: "https://github.com/jack-li-dev"
     - name: "email"
       url: "mailto:jack@jack-li.me"
-
-menu:
-  main:
-    - identifier: posts
-      name: Posts
-      url: /posts/
-      weight: 10
-    - identifier: archives
-      name: Archives
-      url: /archives/
-      weight: 20
-    - identifier: search
-      name: Search
-      url: /search/
-      weight: 30
 
 outputs:
   home:
