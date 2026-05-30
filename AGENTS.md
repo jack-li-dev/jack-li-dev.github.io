@@ -1,22 +1,119 @@
 # AGENTS.md
 
+## CRITICAL Production Push Identity Gate
+
+After every push to the production repository, run the three identity checks below before claiming completion.
+
+Public identity boundary:
+
+```text
+GitHub public profile email: jack@jack-li.me
+Git commit email: 16163394+jack-li-dev@users.noreply.github.com
+```
+
+The public GitHub profile may show `jack@jack-li.me`. Git commit metadata must never use that address. Commits must use only the GitHub anonymous noreply alias.
+
+### Check 1: Local Repository Identity Scope
+
+From the repository root:
+
+```bash
+git config user.name "Jack Li"
+git config user.email "16163394+jack-li-dev@users.noreply.github.com"
+git config user.name
+git config user.email
+git config --list --show-origin | grep -E "user\\.(name|email)"
+```
+
+Required output for the first two readbacks:
+
+```text
+Jack Li
+16163394+jack-li-dev@users.noreply.github.com
+```
+
+Required source check:
+
+```text
+file:.git/config user.email=16163394+jack-li-dev@users.noreply.github.com
+```
+
+The local `.git/config` entry must override any global identity. This keeps the anonymous email scoped to this project and avoids contaminating other repositories.
+
+### Check 2: Full Local Branch Metadata
+
+From the repository root:
+
+```bash
+git log main --pretty=format:"Commit: %h | Author: %an | Email: <%ae> | Committer: %cn | CommitterEmail: <%ce> | Date: %ad%n"
+```
+
+Every displayed commit on `main` must show:
+
+```text
+Author: Jack Li
+Email: <16163394+jack-li-dev@users.noreply.github.com>
+Committer: Jack Li
+CommitterEmail: <16163394+jack-li-dev@users.noreply.github.com>
+```
+
+Hard fail if any displayed commit uses a real email in either author or committer metadata, such as:
+
+```text
+Email: <jack@jack-li.me>
+CommitterEmail: <huaijiu888@gmail.com>
+```
+
+If the check fails, stop. Fix the current repository identity with:
+
+```bash
+git config user.name "Jack Li"
+git config user.email "16163394+jack-li-dev@users.noreply.github.com"
+```
+
+Then amend or rewrite the affected commit metadata before any further production push. A new masking commit is not enough. If any historical commit leaks a real email, rewrite the reachable production history and push with `--force-with-lease`.
+
+### Check 3: Full Production Clone Metadata
+
+After pushing to production, verify the real production clone as well:
+
+```bash
+cd /home/dev/github/jack-li-dev.github.io
+git fetch origin main
+git pull --ff-only origin main
+git log main --pretty=format:"Commit: %h | Author: %an | Email: <%ae> | Committer: %cn | CommitterEmail: <%ce> | Date: %ad%n"
+```
+
+Every displayed production commit must show:
+
+```text
+Author: Jack Li
+Email: <16163394+jack-li-dev@users.noreply.github.com>
+Committer: Jack Li
+CommitterEmail: <16163394+jack-li-dev@users.noreply.github.com>
+```
+
+This is an all-history gate. If even one production commit fails, the production repository is not compliant.
+
 ## Project Boundary
 
 This repository is the Hugo source workspace for Jack Li's site customization.
 
-Primary development remote:
+Shadow sandbox / staging remote:
 
 ```text
 git@github.com:jack-li-dev/my_hugo.git
 ```
 
-Production/GitHub Pages source remote may exist as `origin`:
+Production/GitHub Pages source remote:
 
 ```text
 git@github.com:jack-li-dev/jack-li-dev.github.io.git
 ```
 
-Do not push to `origin` unless the user explicitly asks for production/main-site push. For normal development notes, handoff docs, rules, and staging work, push only to `my_hugo`.
+`my_hugo` is the test/staging shadow sandbox. `jack-li-dev.github.io` is the formal production repository for the public site.
+
+Do not push to `jack-li-dev.github.io` unless the user explicitly authorizes a production/main-site push in the current task. For normal development notes, handoff docs, rules, and staging work, push only to `my_hugo`.
 
 ## Git Rules
 
@@ -27,21 +124,21 @@ Do not push to `origin` unless the user explicitly asks for production/main-site
   - `public/`
   - `.hugo_build.lock`
   - `resources/_generated/`
-- When the user says to push to `git@github.com:jack-li-dev/my_hugo.git`, add/use remote name `my_hugo` and push there only.
-- Keep `origin` untouched unless the user explicitly names `git@github.com:jack-li-dev/jack-li-dev.github.io.git` or clearly requests production/GitHub Pages push.
+- When the user says to push to `git@github.com:jack-li-dev/my_hugo.git`, add/use the sandbox remote and push there only.
+- Keep the production remote untouched unless the user explicitly names `git@github.com:jack-li-dev/jack-li-dev.github.io.git`, `https://github.com/jack-li-dev/jack-li-dev.github.io`, or clearly requests production/GitHub Pages push.
 
 ## Hugo Local Preview Rules
 
 Always start local preview with an explicit localhost baseURL:
 
 ```bash
-../.bin/hugo server --bind 127.0.0.1 --baseURL http://127.0.0.1:1313/ --disableFastRender
+./.bin/hugo server --bind 127.0.0.1 --baseURL http://127.0.0.1:1313/ --disableFastRender
 ```
 
 For background preview, use the verified detached command:
 
 ```bash
-setsid ../.bin/hugo server --bind 127.0.0.1 --baseURL http://127.0.0.1:1313/ --disableFastRender > /tmp/jack-li-me-hugo.log 2>&1 < /dev/null & echo $! > /tmp/jack-li-me-hugo.pid
+setsid ./.bin/hugo server --bind 127.0.0.1 --baseURL http://127.0.0.1:1313/ --disableFastRender > /tmp/jack-li-me-hugo.log 2>&1 < /dev/null & echo $! > /tmp/jack-li-me-hugo.pid
 ```
 
 Stop background preview with:
@@ -59,10 +156,99 @@ If local links unexpectedly point to `https://jack-li.me/`, restart the Hugo ser
 Run before claiming completion:
 
 ```bash
-../.bin/hugo --gc --minify
+./.bin/hugo --gc --minify
 ```
 
 A clean build should have no errors and no Hugo deprecation warnings.
+
+## Article Ordering Consistency
+
+When an article compares the same group of concepts across headings, prose, Mermaid diagrams, tables, lists, or captions, keep the order identical everywhere.
+
+- For timeline-shaped technical concepts, use chronological order by default.
+- Example canonical order for Claude Code evolution/comparison content:
+
+```text
+Skill -> Subagent -> Workflow
+```
+
+- After generating or importing an article, run a final consistency audit over every repeated group such as `A vs B vs C`, Mermaid subgraphs, table columns, list items, and nearby prose.
+- If any order differs, fix the heading, diagram, and table/list order together before publishing.
+
+## Mermaid Static Image Rules
+
+If an article uses Mermaid and the publish decision is to ship a rendered image instead of browser-side Mermaid JS, use this repository as the asset source of truth.
+
+- Store generated Mermaid images under:
+
+```text
+/home/dev/github/my_hugo/static/mermaid/
+```
+
+- Do not put published Mermaid images under `content/`, `assets/`, or `public/`.
+- In Markdown, reference them with root-relative paths only:
+
+```markdown
+![](/mermaid/<file>.svg)
+```
+
+- Do not write `static/mermaid/<file>.svg`.
+- Do not write relative paths such as `../mermaid/<file>.svg`.
+
+### Mermaid Render Toolchain
+
+- Prefer the fixed local CLI from the writing workspace:
+
+```text
+/home/dev/.skills-manager/skills/my-skills/skills/write-skill/.tools/mermaid-cli/node_modules/.bin/mmdc
+```
+
+- Prefer system Chromium:
+
+```text
+/usr/bin/chromium-browser
+```
+
+- If the local Mermaid CLI is missing, install it in the writing workspace with:
+
+```bash
+PUPPETEER_SKIP_DOWNLOAD=1 npm install @mermaid-js/mermaid-cli@11.15.0 --prefix /home/dev/.skills-manager/skills/my-skills/skills/write-skill/.tools/mermaid-cli --no-audit --no-fund
+```
+
+- If `npx @mermaid-js/mermaid-cli` times out or throws `ENOTEMPTY`, do not keep retrying `npx`. Clean the damaged `~/.npm/_npx/` temp directory and run `npm cache verify`, or use the fixed local CLI above.
+
+### Mermaid Publish Verification Loop
+
+Before claiming a Mermaid image is ready for publish, verify this exact loop:
+
+1. The source image exists in `static/mermaid/`.
+2. Run Hugo build or local preview:
+
+```bash
+./.bin/hugo --gc --minify
+```
+
+or
+
+```bash
+./.bin/hugo server --bind 127.0.0.1 --baseURL http://127.0.0.1:1313/ --disableFastRender
+```
+
+3. Confirm the built file exists in:
+
+```text
+/home/dev/github/my_hugo/public/mermaid/
+```
+
+4. Open both:
+
+```text
+http://127.0.0.1:1313/mermaid/<file>.svg
+```
+
+and the article page that references it.
+
+If either path fails, do not claim the Mermaid asset is ready.
 
 For i18n/navigation changes, verify these routes:
 
@@ -120,7 +306,7 @@ Do not edit files inside `themes/PaperMod` directly unless the user explicitly a
 
 Incident profile:
 
-- Scenario: During the sovereign site cleanup from multilingual i18n to English-only, the pipeline also introduced a hybrid static/dynamic LTS marker. Local Hugo must keep `lts_string: "[LTS: 2026.05.26]"` as a static baseline, while GitHub Actions mutates that value only inside the ephemeral Ubuntu build sandbox using `TZ="America/New_York"` and `date -d "+365 days"`.
+- Scenario: During the sovereign site cleanup from multilingual i18n to English-only, the pipeline also introduced a hybrid static/dynamic LTS marker. Local Hugo must keep `lts_string: "[LTS: 2026.05.26]"` as a static baseline, while GitHub Actions mutates that value only inside the ephemeral Ubuntu build sandbox using the current `America/New_York` date.
 - Shadow loop: The private `my_hugo` repository was used as the blue/green validation loop before production Pages rollout.
 - Deadlock: After changing repository visibility from Private to Public through Danger Zone, GitHub Pages routing and repository policy state did not fully converge immediately. The default `GITHUB_TOKEN` remained effectively read-only for Pages deployment.
 - Physical result: The build job passed, but the deploy job was skipped or blocked because the workflow did not have effective high-privilege Pages write authority. The Settings/Pages screen did not produce a usable Pages URL.
@@ -146,10 +332,11 @@ environment:
 ```
 
 - Keep the LTS mutation inside the CI sandbox only. Never commit the computed date back into `hugo.yaml`.
+- The LTS date must use `TZ="America/New_York"` and the current day. Do not use `+365 days`, `tomorrow`, or any other future offset.
 - Required CI mutation primitive:
 
 ```bash
-FUTURE_LTS="$(TZ="America/New_York" date -d "+365 days" "+%Y.%m.%d")"
+FUTURE_LTS="$(TZ="America/New_York" date "+%Y.%m.%d")"
 sed -i "s|\[LTS: 2026\.05\.26\]|[LTS: ${FUTURE_LTS}]|g" hugo.yaml
 ```
 

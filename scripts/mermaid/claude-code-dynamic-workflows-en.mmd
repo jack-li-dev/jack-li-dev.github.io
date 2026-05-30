@@ -1,0 +1,24 @@
+flowchart LR
+  subgraph Skill["Skill"]
+    direction TB
+    S1[Prompt]
+    S2[Context]
+    S3[Small]
+  end
+
+  subgraph Subagent["Subagent"]
+    direction TB
+    A1[Claude]
+    A2[Context]
+    A3[Few]
+  end
+
+  subgraph Workflow["Workflow"]
+    direction TB
+    W1[Script]
+    W2[Variables]
+    W3[Many]
+  end
+
+  S1 ~~~ A1
+  A1 ~~~ W1

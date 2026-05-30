@@ -39,9 +39,9 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
-      - name: Inject rolling LTS date in CI sandbox
+      - name: Inject Eastern-time LTS date in CI sandbox
         run: |
-          FUTURE_LTS="$(TZ="America/New_York" date -d "+365 days" "+%Y.%m.%d")"
+          FUTURE_LTS="$(TZ="America/New_York" date "+%Y.%m.%d")"
           echo "FUTURE_LTS=${FUTURE_LTS}" >> "$GITHUB_ENV"
           echo "FUTURE_LTS=${FUTURE_LTS}"
           sed -i "s|\\[LTS: 2026\\.05\\.26\\]|[LTS: ${FUTURE_LTS}]|g" hugo.yaml

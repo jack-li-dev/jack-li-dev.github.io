@@ -48,6 +48,40 @@
         });
     });
 
+    document.querySelectorAll('.md-content img[src^="/mermaid/"]').forEach((img) => {
+        img.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            let lightbox = document.querySelector(".mermaid-lightbox");
+            if (!lightbox) {
+                lightbox = document.createElement("div");
+                lightbox.className = "mermaid-lightbox";
+                lightbox.innerHTML = '<img alt="">';
+                document.body.appendChild(lightbox);
+                lightbox.addEventListener("click", () => {
+                    lightbox.classList.remove("is-open");
+                });
+                document.addEventListener("keydown", (event) => {
+                    if (event.key === "Escape") {
+                        lightbox.classList.remove("is-open");
+                    }
+                });
+            }
+            const preview = lightbox.querySelector("img");
+            preview.src = this.currentSrc || this.src;
+            preview.alt = this.alt || "";
+            requestAnimationFrame(() => lightbox.classList.add("is-open"));
+        });
+    });
+
+    document.querySelectorAll('.md-content a[href^="/mermaid/"]').forEach((link) => {
+        link.addEventListener("click", function (event) {
+            if (this.querySelector('img[src^="/mermaid/"]')) {
+                event.preventDefault();
+            }
+        });
+    });
+
 </script>
 
 {{- if (not site.Params.disableScrollToTop) }}

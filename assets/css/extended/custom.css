@@ -86,6 +86,50 @@ a:hover {
     line-height: 1.6;
 }
 
+.md-content p:has(> img[src^="/mermaid/"]) {
+    margin: 1.5rem 0;
+    overflow: visible;
+}
+
+.md-content img[src^="/mermaid/"] {
+    display: block;
+    width: 100%;
+    max-width: 860px;
+    margin: 1rem auto;
+    transform: none;
+    border-radius: 0;
+    cursor: zoom-in;
+}
+
+.mermaid-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    padding: 32px;
+    background: rgba(0, 0, 0, 0.88);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+}
+
+.mermaid-lightbox.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mermaid-lightbox img {
+    max-width: min(96vw, 1400px);
+    max-height: 92vh;
+    transform: scale(0.96);
+    transition: transform 180ms ease;
+}
+
+.mermaid-lightbox.is-open img {
+    transform: scale(1);
+}
+
 @keyframes telemetry-led {
     0%,
     100% {
@@ -96,10 +140,25 @@ a:hover {
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
     .profile-telemetry {
         width: 100%;
         align-items: flex-start;
         font-size: 0.68rem;
+    }
+
+    .md-content p:has(> img[src^="/mermaid/"]) {
+        overflow-x: auto;
+    }
+
+    .md-content img[src^="/mermaid/"] {
+        width: 960px;
+        max-width: none;
+        margin: 1rem 0;
+        cursor: zoom-in;
+    }
+
+    .mermaid-lightbox {
+        padding: 16px;
     }
 }
