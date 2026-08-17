@@ -9,6 +9,8 @@ Before any blog task, read `AGENTS.md` in full. In particular:
 - Keep unpublished bilingual drafts local/private. Only a frozen English release candidate may be imported uncommitted for the real production Hugo preview loop.
 - Front matter is always first. A private pre-publication draft may omit `date` / `lastmod`; the frozen production candidate must use the real `America/New_York` release time and its actual DST offset.
 - Every article retains the provenance fingerprint and release hash/Git/time evidence defined in `AGENTS.md`.
+- Match the established published-site voice before polishing a new article: concrete engineering setup, unresolved technical tension, natural section handoffs, and an ending that returns to the opening. External engineering blogs are structural references only, not voices to imitate.
+- Put provenance in valid comments inside a real code/config example when available; do not append a standalone fingerprint footer.
 - Never invent commands, output, test results, versions, citations, runtime behavior, or personal experience.
 - When reader-facing runnable code or lock/config files are presented as the executed reproduction, deterministically compare them with the actual executed files before release; formatting-only normalization is allowed, semantic drift is not.
 - Scheduled/release Hugo builds use a verified pinned version; never silently convert the CI back to a floating `latest` version.
