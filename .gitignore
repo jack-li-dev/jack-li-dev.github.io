@@ -17,6 +17,9 @@ Thumbs.db
 # Local/private pre-publication packages; never commit future article drafts here.
 drafts/prepublish/
 
+# Local Codex project skills; installed per workstation, never publish third-party skill bundles.
+.agents/skills/
+
 # ==============================================================================
 # 2026 PLATFORM FORTRESS - ZERO-NOISE RUNTIME BLACKLIST
 # ==============================================================================

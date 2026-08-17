@@ -267,10 +267,13 @@ Simplified Chinese release copy:
 ```text
 deslop-zh
 -> qu-ai-wei (minimal technical-prose pass)
+-> humanizer-zh (review-only second pass; report candidates, do not auto-rewrite)
 -> semantic diff against Canonical Knowledge
 ```
 
 - Chinese-specific rules outrank English-only punctuation, passive-voice, or vocabulary heuristics.
+- `humanizer-zh` is the independent second reviewer for reader-facing Chinese prose. Keep its optional author-voice mode disabled unless the Human explicitly requests a named voice; never blend voice profiles into the default site voice. Repository rules, current site samples, technical terminology rules, and fact/scope constraints override generic Skill heuristics.
+- In its default review-only role, `humanizer-zh` may flag translation-like syntax, mechanical contrast frames, empty conclusions, list inflation, punctuation/terminology inconsistency, article-level drift, and paragraph rhythm. Treat every flag as a Candidate: only apply a change when it improves the current article under repository rules without weakening causality, scope, evidence, technical precision, or the established site voice.
 - After Chinese humanization, perform a native-Chinese cold read without looking at the English copy. If the paragraph order only makes sense because the editor remembers the English source, rewrite the Chinese transitions before bilingual fact alignment.
 - Preserve technical terms, evidence strength, causality, responsibility, numbers, and version scope.
 - Never invent personal anecdotes or "human" details to satisfy a style detector.
