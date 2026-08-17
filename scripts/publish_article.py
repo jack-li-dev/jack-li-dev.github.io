@@ -112,6 +112,24 @@ def slugify(value: str) -> str:
     return value.strip("-") or "article"
 
 
+def planned_publication_paths(source: Path) -> list[str]:
+    """Predict the article and Mermaid paths an import may create, without mutating the repo."""
+    text = source.read_text(encoding="utf-8")
+    _, fm, body = split_front_matter(text)
+    title = unquote(fm.get("title", source.stem))
+    slug = slugify(unquote(fm.get("slug", title)))
+    blocks = list(re.finditer(r"```mermaid\n(.*?)\n```", body, flags=re.S))
+
+    paths = [f"content/posts/{slug}.en.md"]
+    for idx in range(1, len(blocks) + 1):
+        stem = slug if len(blocks) == 1 else f"{slug}-{idx}"
+        paths.append(f"scripts/mermaid/{stem}.mmd")
+    for idx in range(1, len(blocks) + 1):
+        stem = slug if len(blocks) == 1 else f"{slug}-{idx}"
+        paths.append(f"static/mermaid/{stem}.svg")
+    return paths
+
+
 def replace_mermaid_blocks(body: str, slug: str) -> tuple[str, list[Path]]:
     blocks = list(re.finditer(r"```mermaid\n(.*?)\n```", body, flags=re.S))
     if not blocks:
@@ -184,11 +202,19 @@ def drop_hugo_removed_keys(raw: str) -> str:
     return "\n".join(lines)
 
 
-def update_front_matter(raw: str, date: str | None, aliases: list[str]) -> str:
+def update_front_matter(
+    raw: str,
+    date: str | None,
+    aliases: list[str],
+    *,
+    draft: bool | None = None,
+) -> str:
     updated = drop_hugo_removed_keys(raw)
     if date:
         updated = replace_scalar(updated, "date", date)
         updated = replace_scalar(updated, "lastmod", date)
+    if draft is not None:
+        updated = replace_scalar(updated, "draft", "true" if draft else "false")
     updated = append_aliases(updated, aliases)
     return "---\n" + updated.rstrip() + "\n---\n\n"
 
@@ -211,6 +237,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", required=True)
     parser.add_argument("--date")
+    parser.add_argument("--draft", choices=("true", "false"))
     parser.add_argument("--alias", action="append", default=[])
     parser.add_argument("--replace-slug")
     args = parser.parse_args()
@@ -223,7 +250,13 @@ def main() -> None:
     slug = slugify(unquote(fm.get("slug", title)))
 
     body, rendered = replace_mermaid_blocks(body, slug)
-    output = update_front_matter(raw_fm, args.date, args.alias) + body.rstrip() + "\n"
+    draft_override = None if args.draft is None else args.draft == "true"
+    output = update_front_matter(
+        raw_fm,
+        args.date,
+        args.alias,
+        draft=draft_override,
+    ) + body.rstrip() + "\n"
 
     issues = audit_ordering(output)
     if issues:

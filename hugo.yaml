@@ -14,6 +14,7 @@ minify:
 
 taxonomies:
   category: "categories"
+  tag: "tags"
 
 languages:
   en:
@@ -46,6 +47,7 @@ languages:
           weight: 40
 
 params:
+  author: "Jack Li"
   env: production
   lts_string: "[LTS: 2026.05.26]"
   defaultTheme: "dark"
@@ -61,6 +63,12 @@ params:
   showToc: true
   TocOpen: false
   disableSpecial1stPost: false
+  assets:
+    favicon: "/favicon.svg"
+    favicon16x16: "/favicon.svg"
+    favicon32x32: "/favicon.svg"
+    apple_touch_icon: "/favicon.svg"
+    safari_pinned_tab: "/favicon.svg"
   socialButtons:
     - name: "github"
       url: "https://github.com/jack-li-dev"

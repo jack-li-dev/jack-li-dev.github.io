@@ -14,6 +14,9 @@ PREVIEW_COMMAND.txt
 Thumbs.db
 .bin/
 
+# Local/private pre-publication packages; never commit future article drafts here.
+drafts/prepublish/
+
 # ==============================================================================
 # 2026 PLATFORM FORTRESS - ZERO-NOISE RUNTIME BLACKLIST
 # ==============================================================================

@@ -161,6 +161,142 @@ Run before claiming completion:
 
 A clean build should have no errors and no Hugo deprecation warnings.
 
+## Publication Release Governance
+
+Blog publication work must stay isolated from concurrent Knowledge and experiment work.
+
+- `Knowledge` and `my_technology` may be read or executed for evidence, but blog tasks must not edit, stage, commit, reset, stash, rebase, clean, or otherwise mutate those repositories.
+- Active RBAC work and its flywheel remain out of publication scope until separately completed and selected.
+- Before editing this repository, run `git status --short --branch`. Preserve unrelated work and stop if the task would overlap it.
+- Unpublished Chinese/English drafts remain local/private. A frozen English release candidate may enter this production working tree uncommitted for Hugo build/render review. Production commit/push still requires explicit Human approval.
+
+### Release cadence
+
+- One weekly release window is the default, not a quota. `NO-OP` is valid when no article is release-ready.
+- Publish at most one new technical article per week. Prefer roughly 2-4 high-quality releases per month while the site is still building its technical reputation.
+- Never weaken a gate or create filler to preserve cadence.
+
+### Front matter and time authority
+
+- Front matter must be the first bytes of an article. Nothing may appear before the opening `---`.
+- Pre-publication drafts may intentionally omit `date` and `lastmod` so a draft-creation time cannot be mistaken for the first publication time.
+- A frozen production candidate must include accurate `title`, `date`, `lastmod`, `draft`, `slug`, `description`, `categories`, and `tags` values appropriate to that article.
+- Production publication time authority is `America/New_York`. Never derive formal release timestamps from the operator's local timezone.
+- Generate real Eastern timestamps with `TZ="America/New_York" date --iso-8601=seconds`; preserve the DST offset returned by the timezone database.
+- `date` becomes immutable after the first production release. `lastmod` initially equals `date` and changes only for substantive article edits.
+- If a draft does carry timestamps, treat them as provisional. When the article is frozen for production, replace them with the real Eastern release timestamp.
+
+### Provenance fingerprint
+
+Every formal article must carry the established Jack Li provenance marker:
+
+```text
+JACK-LI::PROVENANCE
+DOC-ID: <stable unique article id>
+AUTH-SIG: <stable unique non-secret marker>
+SOURCE: https://jack-li.me
+CONTACT: jack@jack-li.me
+```
+
+- Keep the block after front matter; an HTML comment near the end of the article is preferred when the marker is not part of a real code sample.
+- `DOC-ID` and `AUTH-SIG` must not silently change after publication.
+- Treat the marker as provenance evidence, not DRM or a cryptographic signature.
+- Release evidence must also retain the final article SHA-256, relevant source/runtime Git commits, production commit, and Eastern publication time.
+
+### Evidence and runtime truth
+
+- Never write `tested`, `verified`, `works`, benchmark numbers, supported versions, command output, or runtime behavior from memory.
+- For executable claims, run the smallest sufficient real check and retain command, working directory, relevant versions, source Git commit, timestamp, exit code, and unedited output.
+- If an article says a displayed test, source file, `go.mod`, `go.sum`, config, or other runnable artifact is the exact reproduction that was executed, compare the reader-facing block deterministically with the executed source before release. Normalize only syntax-preserving formatting such as `gofmt`; do not rely on visual review for code fidelity.
+- Keep environment scope accurate. Evidence from WSL2/Linux or one dependency version must not be generalized beyond what sources and tests support.
+- Runtime checks stay article-scoped. Do not rerun unrelated JWT, RBAC, GORM, or other suites for ceremony.
+- Pin the Hugo version used by CI/release automation. Do not use a floating `latest` version for scheduled publication. Treat a Hugo version upgrade as a separate infrastructure change: verify a real build/render first, then update the pin.
+
+### Chinese and English publication copies
+
+- Canonical Knowledge remains upstream authority. Publication drafts are derived views.
+- When a Chinese control draft exists, use it to preserve the technical meaning. The English article is an audience-native adaptation rather than a line-by-line translation.
+- Before release, compare Chinese, English, and Canonical Knowledge for load-bearing facts, versions, numbers, conditions, limitations, causal relations, code behavior, and verification statements.
+
+### Anti-slop and humanization
+
+Do not stack every available humanizer as consecutive rewrite passes. Extra rewriting can erase technical qualifiers.
+
+English release copy:
+
+```text
+stop-slop
+-> humanizer
+-> semantic diff against pre-edit copy and Canonical Knowledge
+-> load-bearing claim revalidation
+```
+
+- `deslop-en`, `avoid-ai-writing`, `anti-ai-slop-writing`, and `slopbuster` are optional adversarial audits. Use them only for incremental findings; do not automatically rewrite every flag.
+
+Simplified Chinese release copy:
+
+```text
+deslop-zh
+-> qu-ai-wei (minimal technical-prose pass)
+-> semantic diff against Canonical Knowledge
+```
+
+- Chinese-specific rules outrank English-only punctuation, passive-voice, or vocabulary heuristics.
+- Preserve technical terms, evidence strength, causality, responsibility, numbers, and version scope.
+- Never invent personal anecdotes or "human" details to satisfy a style detector.
+
+### Review order and release rounds
+
+Review publication material in this order:
+
+```text
+alignment
+-> layout/render
+-> factual/technical errors
+-> logic
+-> control-plane leakage
+-> links
+-> tags/front matter/metadata
+-> line count and split pressure
+-> causality
+-> instant mental-model clarity
+-> closure
+-> prerequisites
+-> human prose / concision / truth / repetition
+```
+
+A frozen release candidate requires at least three different review rounds:
+
+1. Evidence/technical: canonical alignment, primary sources, runtime evidence, versions, code/command truth, logic, causality, security, and rights.
+2. Post-edit semantic: after humanization/deslop, re-check Chinese-English-Canonical parity and every changed load-bearing claim.
+3. Release: front matter, Eastern timestamp, provenance fingerprint, links, metadata/SEO, Hugo build, real render, final diff, hashes, and production identity.
+
+Repeatedly rereading prose without a different review responsibility does not count as an independent round. A material edit invalidates affected downstream gates.
+
+Production publication is blocked until all applicable gates pass and the Human explicitly approves the frozen artifact.
+
+### Manual / scheduled release automation
+
+- `scripts/blog_release.py` / `scripts/blog-release.sh` are the canonical production release manager. Manual and scheduled publication must share this core rather than maintain separate push logic.
+- Automation is OFF by default. Repository setup, clone, build, and test operations must never enable a Windows scheduled task implicitly.
+- Scheduled publication requires both the Windows task and the ignored repository-local `.bin/autopublish.enabled` kill switch. Either one being OFF must prevent scheduler-driven publication; manual `run-once` may explicitly bypass only this switch for diagnosis.
+- A scheduled release requires a private/local `release.json` created only after explicit Human mastery + final editorial approval. The approval binds the exact English article SHA-256 and an `America/New_York` not-before time.
+- Approval also freezes the full prepublication package digest and the load-bearing Canonical Wiki path/SHA when present. Due-time publication must re-check them read-only; any change invalidates approval and returns the article to review.
+- Scheduler execution is deterministic only: validate approved SHA, publication cadence, Git state/identity/remote, pinned Hugo, build, commit, and push. Do not invoke an LLM, humanizer, fact-check rewrite, or automatic dependency/tool upgrade at due time.
+- Missed schedules caused by an offline/powered-off workstation are catch-up events. Use the actual later Eastern production transaction time for first `date` / `lastmod`; never backdate the article to the missed schedule.
+- Publish at most one due article per America/New_York ISO week. Backlog must remain queued rather than burst-publishing after downtime.
+- Every production article release must be an isolated single-article commit with `Publication-*` trailers. Infrastructure/rule/config changes must be committed separately before release automation runs.
+- A failed production push may remain as one `push-pending` publication transaction. Never append a second publication commit for the same approved DOC-ID. If the remote confirms the pending commit was not received, retry may amend that single local commit to the new actual Eastern production-attempt time before pushing again.
+- The Windows Task Scheduler adapter is only a wake-up mechanism. It may trigger at logon and periodically, but release eligibility remains entirely inside the repository release manager.
+
+### Withdrawal and history rewrite
+
+- `withdraw` is the default safe unpublish operation: remove selected current article files in a new commit and push normally. It may select multiple articles by filename and/or Eastern publication date.
+- `purge-tail` is a separate high-risk operation. It may rewrite production history only when all selected publication commits form the exact contiguous tail of `origin/main` and there are no later/unrelated commits to replay.
+- `purge-tail` must create a local recovery branch before reset and must push with an exact `--force-with-lease`; never fall back to plain `--force`.
+- Do not automate arbitrary middle-of-history deletion for routine content withdrawal. If legal/secret/privacy remediation requires deeper history rewriting, stop the normal publication workflow and perform a separately reviewed incident procedure.
+- Rewritten Git branch history cannot guarantee removal from third-party clones, forks, search caches, or CDNs; never claim otherwise.
+
 ## Article Ordering Consistency
 
 When an article compares the same group of concepts across headings, prose, Mermaid diagrams, tables, lists, or captions, keep the order identical everywhere.
