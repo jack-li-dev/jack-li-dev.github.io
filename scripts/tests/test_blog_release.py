@@ -299,6 +299,46 @@ class BlogReleaseTests(unittest.TestCase):
             self.assertEqual(result["slug"], "test")
             self.assertEqual(result["article_sha256"], digest)
 
+    def test_validate_prepublish_package_rejects_reader_facing_obsidian_wikilink(self):
+        """Publication must fail closed when renderer-specific Wiki syntax leaks into article prose."""
+        with tempfile.TemporaryDirectory() as tmp:
+            package = Path(tmp)
+            article = package / "article.en.md"
+            article.write_text(
+                "---\ntitle: test\ndraft: true\nslug: test\n---\n"
+                "See [[Go - Zap Structured Logging|Zap logging]].\n",
+                encoding="utf-8",
+            )
+            digest = hashlib.sha256(article.read_bytes()).hexdigest()
+            (package / "manifest.yaml").write_text(
+                "\n".join(
+                    [
+                        "content_id: DOC-1",
+                        "state: ready-for-human-review",
+                        "publication:",
+                        "  slug: test",
+                        f"  article_en_sha256: {digest}",
+                        "gates:",
+                        "  publish_value: pass",
+                        "  canonical_alignment: pass",
+                        "  primary_source_factcheck: pass",
+                        "  runtime_verification: pass",
+                        "  bilingual_alignment: pass",
+                        "  links: pass",
+                        "  hugo_build: pass-hugo-0.164.0-extended",
+                        "  hugo_version_pin: pass-pinned-0.164.0",
+                        "  render: pass-desktop-mobile-console-clean",
+                        "  rights_security: pass",
+                        "  creation_proof: pass-prepublish",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ReleaseError, "Obsidian Wiki link residue"):
+                validate_prepublish_package(package)
+
     def test_validate_prepublish_package_rejects_any_extra_nonhuman_blocked_gate(self):
         """Topic-specific machine gates must block approval even when base gates all pass."""
         with tempfile.TemporaryDirectory() as tmp:

@@ -79,6 +79,10 @@ REQUIRED_PREPUBLISH_GATES = (
     "creation_proof",
 )
 
+WIKILINK_RE = re.compile(r"\[\[([^\]\n]+)\]\]")
+INLINE_CODE_RE = re.compile(r"`[^`\n]*`")
+FENCE_RE = re.compile(r"^[ \t]{0,3}```")
+
 
 def sha256_file(path: Path) -> str:
     """Return the SHA-256 digest for one file."""
@@ -87,6 +91,21 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _reader_facing_wikilink_residues(text: str) -> list[tuple[int, str]]:
+    """Return Obsidian Wiki links that leaked into rendered Markdown prose."""
+    residues: list[tuple[int, str]] = []
+    in_fence = False
+    for line_no, line in enumerate(text.splitlines(), 1):
+        if FENCE_RE.match(line):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        scan_line = INLINE_CODE_RE.sub(lambda match: " " * (match.end() - match.start()), line)
+        residues.extend((line_no, match.group(0)) for match in WIKILINK_RE.finditer(scan_line))
+    return residues
 
 
 def sha256_package(package: Path) -> str:
@@ -352,6 +371,14 @@ def validate_prepublish_package(package: Path) -> dict[str, object]:
     if actual_hash != expected_hash:
         raise ReleaseError(
             f"prepublish article SHA-256 does not match manifest: expected {expected_hash}, got {actual_hash}"
+        )
+
+    wikilink_residues = _reader_facing_wikilink_residues(article_path.read_text(encoding="utf-8"))
+    if wikilink_residues:
+        line_no, residue = wikilink_residues[0]
+        raise ReleaseError(
+            "Obsidian Wiki link residue is not publishable Markdown: "
+            f"article.en.md:{line_no}: {residue}"
         )
 
     gates = _manifest_scalar_section(text, "gates")
