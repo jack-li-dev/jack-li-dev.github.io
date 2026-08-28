@@ -52,6 +52,23 @@ export KNOWLEDGE_REPO=/new/path/Knowledge
 
 在文章进入 `ready-for-human-review` 之前，先做一次 Site Voice Gate（站点文风门禁）：
 
+共享中文表达 invariant 的 Canonical Owner 是 `Knowledge/99-Templates/Chinese-Technical-Expression-Rules.md`。
+本仓只保留 Blog Adapter：不复制 Teaching / Oral / Social 的叙事规则，也不允许“站点文风”覆盖 Truth / Responsibility / Register / Channel Intent。
+
+Blog Adapter 固定关注：
+
+```text
+陌生读者第一屏能否判断“这是不是我的问题”
+→ 标题 / 开场承诺是否能被正文 Evidence 偿还
+→ 一篇文章是否只有一条主 narrative
+→ Heading 是否承载技术对象 / 状态 / 问题 / 结论，而不是课件脚手架
+→ Reference 型内容是否允许 answer-first
+→ Discovery / Debugging 型内容是否把悬念放在“为什么”，而不是故意拖最终答案
+→ Author voice 是否只来自真实判断 / 取舍 / 自我修正，禁止补造个人经历
+→ Public 内容是否保留 load-bearing Scope / Boundary；篇幅短不是删边界的理由
+→ `稳了 / 大佬 / yyds / 一波带走 / 稳如老狗 / 爆改 / 拿捏` 只可作为 Optional Flavor，不能承担技术断言
+```
+
 ```text
 至少对照 1 篇已正式发布文章
 → 标题/编号层级是否属于同一个站点
@@ -65,7 +82,7 @@ export KNOWLEDGE_REPO=/new/path/Knowledge
 → H2/H3 是否直接描述对象 / 状态 / 现象 / 职责 / 问题边界 / 有证据的结论，而不是作者动作或课件脚手架；child heading 是否相对 parent heading 有信息增量，是否存在 H2/H3 重复换皮或 H3 密到像目录树。`先跑一段代码` / `先修最小程序` / `下一步` / 裸 `可运行入口` 这类标题默认 FAIL，除非改成真正的技术对象、状态、边界或结果
 → 第一处及后续表格是否在 Desktop + Mobile 都值得保留：只有真实横向比较才优先 table；长链接导航、长 prose 单元格或窄屏需要横向滚动的表格改成纵向 list / grouped sections / key-value block。Code / ASCII / output 与正文是否有明确视觉层级；Production / Troubleshooting 段是否保持 `现象或对象 → 观察 → 判断 → 操作 → 验证 / 回退` 的 runbook 形态
 → 实验型 / 排障型 / Benchmark / 版本敏感文章是否在正文开头先给出最小验证基线：OS/Arch、语言或 Runtime、关键框架/库版本、部署模式或资源类型，以及这些条件限制了哪些结论。只前置承重环境，不把完整依赖树、kernel 细节、go.sum 或全部命令堆到第一屏；完整复现材料放后文。开头负责告诉读者“结论在哪个环境成立”，后文负责告诉读者“如何一字不差复现”，两处不得重复同一环境块
-→ 中文稿是否经过 `humanizer-zh` 独立第二审：默认 review-only，只报 Candidate，不自动整篇重写；重点检查翻译腔、机械对照句、空泛结尾、列表膨胀、文章主线和段落节奏。作者 voice 默认关闭；任何 Candidate 都必须服从本仓库规则、站点既有文风、事实/Scope/Evidence 与术语约束
+→ 中文稿是否经过可用中文润色 Skill 的独立第二审：`qu-ai-wei` / `humanizer-zh` / `deslop-zh` 都只能 review-only、逐条给 Candidate，不自动串成整篇重写流水线；重点检查翻译腔、机械对照句、空泛结尾、列表膨胀、文章主线和段落节奏。作者 voice 只在承载真实判断、取舍、责任或自我修正时开启，禁止为了“人味”凭空开启；任何 Candidate 都必须重新通过 Truth / Responsibility / Register / Channel Intent，且服从本仓库规则、站点既有文风、事实/Scope/Evidence 与术语约束。Skill 不得为了“像真人”编造事故、经历、数字、错字或毛边
 → 部署/生产示例是否覆盖了会改变结论的主要运行环境；除非主题本身要求其他顺序，默认按物理机/VM → Docker → Kubernetes → 跨环境特殊分支展开，不能把 Kubernetes 或任何单一平台当成默认生产环境。每层还要检查是否存在会改变结论的不同模式，例如物理机/VM 上的 systemd/journald 与 app-owned file。不要把“某类公司一定更常用某平台”写成无来源事实
 → 中文 H2 / 转场是否已经去掉 `Part 1 / 零件 1 / 最后 Mental Model / 先看总图` 一类不自然的课程脚手架
 → Discovery / Debugging 型文章的标题是否只界定问题域，没有提前剧透 Root Cause / Final Fix
