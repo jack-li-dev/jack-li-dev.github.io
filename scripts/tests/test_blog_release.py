@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 
 from scripts.blog_release import (
     ReleaseError,
+    _hugo_version_matches,
     approve_release_package,
     article_mermaid_paths,
     autopublish_is_enabled,
@@ -33,6 +34,23 @@ from scripts.publish_article import planned_publication_paths, update_front_matt
 
 class BlogReleaseTests(unittest.TestCase):
     """Validate the high-risk publication and withdrawal guardrails."""
+
+    def test_hugo_version_match_accepts_standard_extended_output(self):
+        """Pinned Hugo validation must parse the CLI's leading 'hugo <version>' format."""
+        self.assertTrue(
+            _hugo_version_matches(
+                "hugo v0.164.0+extended linux/amd64 BuildDate=unknown"
+            )
+        )
+
+    def test_hugo_version_match_rejects_non_extended_or_wrong_version(self):
+        """Pinned release validation must fail closed for non-matching Hugo builds."""
+        self.assertFalse(_hugo_version_matches("hugo v0.164.0 linux/amd64 BuildDate=unknown"))
+        self.assertFalse(
+            _hugo_version_matches(
+                "hugo v0.165.0+extended linux/amd64 BuildDate=unknown"
+            )
+        )
 
     def test_parse_eastern_local_time_uses_dst_offset(self):
         """Summer and winter schedules must use New York DST rules, not a fixed offset."""

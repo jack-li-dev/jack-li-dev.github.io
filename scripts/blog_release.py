@@ -740,6 +740,12 @@ def _ensure_clean_main_and_fetch() -> tuple[str, str]:
     return local, remote
 
 
+def _hugo_version_matches(output: str) -> bool:
+    """Return whether Hugo CLI output reports the exact pinned Extended version."""
+    match = re.match(r"^hugo\s+(v\S+)(?:\s|$)", output.strip())
+    return bool(match and match.group(1) == EXPECTED_HUGO_VERSION)
+
+
 def _resolve_hugo() -> Path:
     """Find the preinstalled pinned Hugo Extended binary; never download at publish time."""
     candidates = [REPO_ROOT / ".bin" / "hugo"]
@@ -750,7 +756,7 @@ def _resolve_hugo() -> Path:
         if not candidate.is_file() or not os.access(candidate, os.X_OK):
             continue
         version = _run([str(candidate), "version"]).stdout.strip()
-        if version.startswith(EXPECTED_HUGO_VERSION):
+        if _hugo_version_matches(version):
             return candidate
     raise ReleaseError(
         f"verified Hugo Extended 0.164.0 not found; expected version prefix {EXPECTED_HUGO_VERSION}"
