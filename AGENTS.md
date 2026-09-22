@@ -259,13 +259,20 @@ Do not stack every available humanizer as consecutive rewrite passes. Extra rewr
 English release copy:
 
 ```text
-stop-slop
--> humanizer
+fortress-publish-router Pre-Publish Human Mastery Refresh
+-> native English draft / factual-editorial gates
+-> humanizer (one default review/edit pass; NO-OP allowed)
 -> semantic diff against pre-edit copy and Canonical Knowledge
 -> load-bearing claim revalidation
+-> GPT-6 Final Red Team
+-> Human final approval
 ```
 
-- `deslop-en`, `avoid-ai-writing`, `anti-ai-slop-writing`, and `slopbuster` are optional adversarial audits. Use them only for incremental findings; do not automatically rewrite every flag.
+- `fortress-publish-router` is the workflow owner for the English pre-publish mastery refresh, Humanizer one-pass rule, semantic comparison, and GPT-6 Final Red Team. This repository only enforces the site-local projection; do not create a second independent publication workflow here.
+- Humanizer is a reviewer/editor, not a truth source or second Primary Writer. One pass is the default ceiling; if it finds no concrete defect, `NO-OP` is valid.
+- `stop-slop`, `deslop-en`, `avoid-ai-writing`, `anti-ai-slop-writing`, and `slopbuster` are optional adversarial audits only when one named residual defect justifies them. Never automatically chain them after Humanizer.
+- GPT-6 must review rather than rewrite the whole article. Its PASS is article-quality evidence only; it cannot replace current Human mastery or explicit Human final publication approval.
+- On a fresh conversation/session, recover the current Canonical Wiki/Evidence, publication package/manifest, and Human mastery state from durable artifacts before resuming. Do not treat assistant memory as publication-readiness evidence.
 
 Simplified Chinese release copy:
 
@@ -306,7 +313,7 @@ alignment
 A frozen release candidate requires at least three different review rounds:
 
 1. Evidence/technical: canonical alignment, primary sources, runtime evidence, versions, code/command truth, logic, causality, security, and rights.
-2. Post-edit semantic: after humanization/deslop, re-check Chinese-English-Canonical parity and every changed load-bearing claim.
+2. Post-edit semantic: after Humanizer or any exceptional targeted prose audit, re-check Chinese-English-Canonical parity and every changed load-bearing claim.
 3. Release: front matter, Eastern timestamp, provenance fingerprint, links, metadata/SEO, Hugo build, real render, final diff, hashes, and production identity.
 
 Repeatedly rereading prose without a different review responsibility does not count as an independent round. A material edit invalidates affected downstream gates.
